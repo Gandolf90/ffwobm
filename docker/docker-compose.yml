@@ -1,0 +1,96 @@
+###############################################################################
+#                          Created By Josua Koenig                            #
+###############################################################################
+
+## if not working on mac : sudo apachectl stop bevor starting docker
+version: '3.9'
+
+services:
+  redis:
+    container_name: redis
+    image: bitnami/redis:latest
+    environment:
+      - REDIS_PASSWORD=${REDIS_PASS}
+
+  mailhog:
+    image: jcalonso/mailhog:latest
+    container_name: mailhog
+    ports:
+      - "8125:8025"
+    restart: always
+
+  db:
+    build:
+      context: ./mysql_conf
+      dockerfile: dockerfile
+    image: mysql
+    platform: 'linux/x86_64'
+    container_name: mysql
+    volumes:
+        - ./mysql:/var/lib/mysql
+        - ./log:/var/log/mysql
+        - ./mysql_conf/conf:/etc/mysql/conf.d
+    ports:
+      - "3306:3306"
+    security_opt:
+      - seccomp:unconfined
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+    healthcheck:
+      test: mysqladmin ping -h 127.0.0.1 -u root --password=${MYSQL_ROOT_PASSWORD}
+      interval: 5s
+      retries: 10
+    restart: always
+
+  nginx:
+     image: nginx:latest
+     container_name: nginx
+     volumes:
+         - ../app/:/app/:cached
+         - ./nginx:/etc/nginx/conf.d
+     ports:
+     - "80:80"
+     depends_on:
+       - php-fpm
+     healthcheck:
+       test: cmd='curl --fail http://nginx.host.com || exit 1'
+       interval: 5s
+       retries: 10
+     restart: always
+
+  php-fpm:
+     build: ./php-fpm/
+     container_name: php
+     volumes:
+       - ../app/:/app/:cached
+       - ./php-fpm/php-ini-overrides.ini:/opt/bitnami/php/etc/conf.d/custom.ini
+       - ./php-fpm/xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+       - ./php-fpm/error_reporting.ini:/usr/local/etc/php/conf.d/error_reporting.ini
+     environment:
+       XDEBUG_SESSION: "PHPSTORM"
+     depends_on:
+       db:
+         condition: service_healthy
+     healthcheck:
+       test: cmd='curl --fail http://nginx.host.com || exit 1'
+       interval: 5s
+       retries: 10
+     restart: always
+
+  adminer:
+    image: adminer:latest
+    container_name: adminer
+    ports:
+      - '8080:8080'
+    environment:
+      PMA_HOST: db
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    links:
+      - db
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: always
