@@ -45,6 +45,9 @@ class PagesController extends AppController
      */
     public function display(string ...$path): ?Response
     {
+        $this->Authorization->skipAuthorization();
+        // add new routes -> articel controller? mit policy und das ganze dann ohne skip!
+
         if (!$path) {
             return $this->redirect('/');
         }
