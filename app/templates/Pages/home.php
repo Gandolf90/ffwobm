@@ -61,7 +61,8 @@ endif;
 
     <link href="https://fonts.googleapis.com/css?family=Raleway:400,700" rel="stylesheet">
 
-    <?= $this->Html->css(['normalize.min', 'milligram.min', 'cake', 'home']) ?>
+    <?= $this->Html->css(['normalize.min', 'cake', 'home', 'custom.css' , 'bootstrap-5.3.1-dist/css/bootstrap.min.css']) ?>
+    <?= $this->Html->script(['bootstrap-5.3.1-dist/js/bootstrap.bundle.min.js']) ?>
 
     <?= $this->fetch('meta') ?>
     <?= $this->fetch('css') ?>

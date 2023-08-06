@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use Cake\Controller\Controller;
+use Cake\Event\EventInterface;
 
 /**
  * Application Controller
@@ -43,6 +44,8 @@ class AppController extends Controller
 
         $this->loadComponent('RequestHandler');
         $this->loadComponent('Flash');
+        $this->loadComponent('Authentication.Authentication');
+        $this->loadComponent('Authorization.Authorization');
 
         /*
          * Enable the following component for recommended CakePHP form protection settings.
@@ -50,4 +53,39 @@ class AppController extends Controller
          */
         //$this->loadComponent('FormProtection');
     }
+
+    public function beforeFilter(EventInterface $event) {
+        // Allow actions without authentication
+        //$this->Authentication->allowUnauthenticated($this->_allowUnauthenticated);
+
+        // Automically skip authorization on actions allowed without authentication
+        //$this->_skipAuthorization = array_merge($this->_skipAuthorization, $this->_allowUnauthenticated);
+
+        // Skip authorization on allowed actions
+        //if (in_array($this->request->getParam('action'), $this->_skipAuthorization)) {
+        //    $this->Authorization->skipAuthorization();
+        //}
+
+        // Refresh identity data on each request
+        //$this->_refreshIdentity();
+    }
+
+    /*public function isAuthorized($user): bool
+    {
+        if ($user) {
+            // Only admins can access admin menu
+            if ($this->getRequest()->getParam('prefix') === 'Admin') {
+                return $user->is_admin_user;
+            }
+
+            // Only active user accounts are allowed
+            //if ($user->is_active) {
+            //    return true;
+            //}
+            return true;
+        }
+
+        // Default deny
+        return false;
+    }*/
 }

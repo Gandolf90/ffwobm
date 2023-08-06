@@ -40,6 +40,8 @@ class UsersController extends AppController
         if ($this->request->is('post') && !$result->isValid()) {
             $this->Flash->error('Invalid username or password');
         }
+
+        $this->render(null, 'login');
     }
 
     public function register()
@@ -60,6 +62,8 @@ class UsersController extends AppController
 
             $this->Flash->error(__('Your registration failed.'));
         }
+
+        $this->render(null, 'register');
     }
 
     public function logout()
