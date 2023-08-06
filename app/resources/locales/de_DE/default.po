@@ -1,0 +1,11 @@
+msgid "Don't have an account?"
+msgstr "Sie haben noch keinen Account?"
+
+msgid "Sign Up"
+msgstr "Registrieren"
+
+msgid "Please enter your login and password!"
+msgstr "Bitte geben Sie ihre Email und Password ein!"
+
+msgid "Forgot password?"
+msgstr "Passwort vergessen?"

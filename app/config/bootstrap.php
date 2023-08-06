@@ -45,6 +45,17 @@ use Cake\Mailer\Mailer;
 use Cake\Mailer\TransportFactory;
 use Cake\Routing\Router;
 use Cake\Utility\Security;
+use Cake\I18n\I18n;
+
+// Check if the language preference is set in session or cookie, and use that language.
+if (isset($_SESSION['language_preference'])) {
+    I18n::setLocale($_SESSION['language_preference']);
+} elseif (isset($_COOKIE['language_preference'])) {
+    I18n::setLocale($_COOKIE['language_preference']);
+} else {
+    // Default language if no preference is set.
+    I18n::setLocale('de_DE'); // Replace with your default language code.
+}
 
 /*
  * See https://github.com/josegonzalez/php-dotenv for API details.
